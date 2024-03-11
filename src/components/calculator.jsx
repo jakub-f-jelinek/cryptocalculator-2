@@ -17,21 +17,21 @@ export const Calculator = () => {
     );
   };
 
-  const handleCount = (price) => {
-    
-  }
+  const handleCount = (price) => {};
 
   return (
     <div>
-      <div>calculator</div>
+      <div>Calculator component</div>
       <div>
         {items.map((coin) => {
           return (
             <div>
               <span>{coin.name}</span>
               <span>{coin.price}</span>
+              {/* <input type="number" min="0" onChange={() => } /> */}
+              <input type="number" min="0" />
               <button onClick={() => handleDelete(coin.id)}>Odstranit</button>
-              <button onClick={() => handleCount(coin.price)}>+</button>
+              <button onClick={() => this.handleCount(coin.price)}>+</button>
             </div>
           );
         })}
