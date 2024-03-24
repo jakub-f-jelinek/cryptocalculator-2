@@ -1,0 +1,10 @@
+@import "../utils/variable.scss";
+
+.btn {
+  padding: 6px 12px;
+  text-transform: uppercase;
+  border: 1px solid $component-color;
+  background-color: $component-color;
+  color: $template-color;
+  font-size: 12px;
+}

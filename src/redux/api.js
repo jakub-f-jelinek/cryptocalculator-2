@@ -1,9 +1,12 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 
+// https://api.coingecko.com/api/v3/coins/markets?vs_currency=czk
+const BASE_URL = "https://api.coingecko.com/api/v3";
+
 export const api = createApi({
   reducerPath: "api",
   baseQuery: fetchBaseQuery({
-    baseUrl: "https://api.coingecko.com/api/v3/",
+    baseUrl: BASE_URL,
   }),
   endpoints: (builder) => ({
     fetchData: builder.query({

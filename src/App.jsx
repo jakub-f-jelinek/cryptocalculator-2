@@ -10,12 +10,15 @@ import { List } from "./components/list";
 import { Calculator } from "./components/calculator";
 import { CoinDetail } from "./components/coinDetail";
 import "./styles/app.scss";
+import "./styles/base/typography.scss";
+import "./styles/utils/variable.scss";
+import "./styles/components/container.scss";
+import "./styles/components/block.scss";
+import "./styles/components/button.scss";
 
 const App = () => {
   return (
-    <section>
-      <div>Crypto calc!</div>
-
+    <section className="page-container">
       <BrowserRouter>
         <Link to="/">Home</Link>
         <Link to="/calculator">Kalkulačka</Link>
@@ -25,14 +28,6 @@ const App = () => {
           <Route path="/:id" element={<CoinDetail />} />
         </Routes>
       </BrowserRouter>
-      {/* 
-      <div>
-        <Calculator />
-      </div>
-
-      <div>
-        <List />
-      </div> */}
     </section>
   );
 };
