@@ -6,7 +6,6 @@ export const CoinDetail = () => {
   const { id } = useParams();
 
   const { data, error, isLoading } = useGetItemIDQuery(id);
-  console.log(data);
 
   if (error) {
     return <div>Error. Something went wrong...</div>;

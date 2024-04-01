@@ -9,16 +9,13 @@ import { Link, useParams } from "react-router-dom";
 
 export const List = () => {
   const { data, error, isLoading } = useFetchDataQuery();
-  console.log(data);
 
   const dispatch = useDispatch();
   const items = useSelector((store) => store.items);
+  console.log(items);
 
   const handleAdd = (id, name, price) => {
-    const existingID = items.some((items) => items.id === id);
-
-    let defaultValue = 1;
-    console.log(defaultValue);
+    const existingID = items.find((items) => items.id === id);
 
     if (!existingID) {
       dispatch(
@@ -26,7 +23,9 @@ export const List = () => {
           id: id,
           name: name,
           price: price,
-          value: defaultValue,
+          unitsTotal: 1,
+          amountValue: price,
+          inCalculator: true,
         })
       );
     }

@@ -1,0 +1,19 @@
+.menu__container {
+  display: flex;
+  .menu__nav-list {
+    display: flex;
+    gap: 12px;
+  }
+
+  .menu__container-list {
+    list-style: none;
+    display: flex;
+    gap: 12px;
+
+    li {
+      a {
+        text-decoration: none;
+      }
+    }
+  }
+}

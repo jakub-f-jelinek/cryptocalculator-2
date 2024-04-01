@@ -25,20 +25,3 @@ export const CurrencySwitcher = () => {
     </div>
   );
 };
-
-// export const CurrencySwitcher = () => {
-//   const handleCurrencySwitch = (e) => {
-//     let newCurrency = e.target.value;
-//     console.log(newCurrency);
-//   };
-
-//   return (
-//     <div>
-//       <div>currencySwitcher</div>
-//       <select name="currencySwitcher" onChange={handleCurrencySwitch}>
-//         <option value="czk">czk</option>
-//         <option value="usd">usd</option>
-//       </select>
-//     </div>
-//   );
-// };

@@ -17,11 +17,11 @@ const itemSlice = createSlice({
       }
     },
     updateItemAmount: (state, action) => {
-      const { id, value, amountValue } = action.payload;
+      const { id, unitsTotal, amountValue } = action.payload;
       const existingItem = state.find((item) => item.id === id);
       if (existingItem) {
         existingItem.id = id;
-        existingItem.value = value;
+        existingItem.unitsTotal = unitsTotal;
         existingItem.amountValue = amountValue;
       }
     },
