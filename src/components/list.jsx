@@ -1,18 +1,20 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { useFetchDataQuery } from "../redux/api";
-import { addItem } from "../redux/slice";
+import { addItem, updateItem, updateTotalCalcValue } from "../redux/slice";
 import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Popup } from "./popup";
 import { CurrencySwitcher } from "./currencySwitcher";
 import { Link, useParams } from "react-router-dom";
+import { selectTotal } from "../redux/selector";
 
 export const List = () => {
   const { data, error, isLoading } = useFetchDataQuery();
 
   const dispatch = useDispatch();
   const items = useSelector((store) => store.items);
-  console.log(items);
+  const totalCalcValue = useSelector(selectTotal);
+  const [totalCalc, setTotalCount] = useState(0);
 
   const handleAdd = (id, name, price) => {
     const existingID = items.find((items) => items.id === id);
@@ -28,6 +30,9 @@ export const List = () => {
           inCalculator: true,
         })
       );
+
+      let updatedTotalCalc = totalCalcValue + price;
+      dispatch(updateTotalCalcValue(updatedTotalCalc));
     }
   };
 
@@ -41,9 +46,7 @@ export const List = () => {
 
   return (
     <div>
-      <div className="popup__wrapper">
-        <Popup />
-      </div>
+      <div className="popup__wrapper">{/* <Popup /> */}</div>
 
       <div className="currency-switcher__wrapper">
         <CurrencySwitcher />

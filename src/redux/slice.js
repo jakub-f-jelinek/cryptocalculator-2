@@ -16,8 +16,9 @@ const itemSlice = createSlice({
         return state.filter((item) => item.id !== id);
       }
     },
-    updateItemAmount: (state, action) => {
-      const { id, unitsTotal, amountValue } = action.payload;
+    updateItem: (state, action) => {
+      const { id, unitsTotal, amountValue, percentage, totalCalcValue } =
+        action.payload;
       const existingItem = state.find((item) => item.id === id);
       if (existingItem) {
         existingItem.id = id;
@@ -25,8 +26,17 @@ const itemSlice = createSlice({
         existingItem.amountValue = amountValue;
       }
     },
+    updateTotalCalcValue: (state, action) => {
+      const newTotalCalcValue = action.payload;
+      state.forEach((item) => {
+        item.totalCalcValue = newTotalCalcValue;
+        const percentage = (item.amountValue / newTotalCalcValue) * 100;
+        item.percent = +percentage.toFixed(2);
+      });
+    },
   },
 });
 
-export const { addItem, deleteItem, updateItemAmount } = itemSlice.actions;
+export const { addItem, deleteItem, updateItem, updateTotalCalcValue } =
+  itemSlice.actions;
 export default itemSlice.reducer;

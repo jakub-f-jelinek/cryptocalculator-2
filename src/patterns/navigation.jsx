@@ -6,8 +6,7 @@ import { selectTotal } from "../redux/selector";
 export const Navigation = () => {
   const [itemsCount, setItemsCount] = useState(0);
   const items = useSelector((store) => store.items);
-  const amountValueTotal = useSelector(selectTotal);
-  console.log(amountValueTotal);
+  const totalCalcValue = useSelector(selectTotal);
 
   useEffect(() => {
     let itemsTotal = items.length;
@@ -32,7 +31,7 @@ export const Navigation = () => {
             <span>Počet položek v kalkulačce: {itemsCount}</span>
           </li>
           <li className="menu__item">
-            <span>Celková hodnota: {amountValueTotal}</span>
+            <span>Celková hodnota: {totalCalcValue}</span>
           </li>
         </ul>
       </div>
