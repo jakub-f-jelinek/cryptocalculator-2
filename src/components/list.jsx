@@ -8,11 +8,15 @@ import { CurrencySwitcher } from "./currencySwitcher";
 import { Link, useParams } from "react-router-dom";
 import { selectTotal } from "../redux/selector";
 
+import { IoAddCircleOutline } from "react-icons/io5";
+
 export const List = () => {
   const { data, error, isLoading } = useFetchDataQuery();
 
   const dispatch = useDispatch();
   const items = useSelector((store) => store.items);
+  console.log(data);
+
   const totalCalcValue = useSelector(selectTotal);
   const [totalCalc, setTotalCount] = useState(0);
 
@@ -45,36 +49,59 @@ export const List = () => {
   }
 
   return (
-    <div>
-      <div className="popup__wrapper">{/* <Popup /> */}</div>
+    <section className="section-container">
+      <div>
+        {/* <div className="popup__wrapper"><Popup /></div> */}
 
-      <div className="currency-switcher__wrapper">
-        <CurrencySwitcher />
+        {/* <div className="currency-switcher__wrapper">
+          <CurrencySwitcher />
+        </div> */}
+
+        <ul className="list-items__wrapper">
+          {data.map((coin) => {
+            let priceChange =
+              coin.price_change_24h < 0
+                ? "price-change__lower"
+                : "price-change__higher";
+
+            return (
+              <li key={coin.id} className="flex list-item">
+                <div className="list-item__info">
+                  <img
+                    className="list-item__img"
+                    src={coin.image}
+                    alt={coin.image}
+                  />
+                  <span>{coin.name}</span>
+                  <span className="list-item__info-price">
+                    {coin.current_price}
+                    <span>CZK</span>
+                  </span>
+                  <span className={priceChange}>{coin.price_change_24h}</span>
+                </div>
+
+                <div className="btn__wrapper">
+                  <button
+                    className="btn btn-primary"
+                    onClick={() =>
+                      handleAdd(coin.id, coin.name, coin.current_price)
+                    }
+                  >
+                    Přidat do kalkulačky
+                    <div className="icon-wrapper">
+                      <IoAddCircleOutline />
+                    </div>
+                  </button>
+
+                  <Link to={`/${coin.id}`}>
+                    <button className="btn btn-secondary">Detail</button>
+                  </Link>
+                </div>
+              </li>
+            );
+          })}
+        </ul>
       </div>
-
-      <ul>
-        {data.map((coin) => {
-          return (
-            <li key={coin.id} className="scss-class">
-              <span>{coin.name}</span>
-              <span>{coin.current_price}</span>
-              <div className="btn__wrapper">
-                <button
-                  onClick={() =>
-                    handleAdd(coin.id, coin.name, coin.current_price)
-                  }
-                >
-                  Přidat do kalkulačky
-                </button>
-
-                <Link to={`/${coin.id}`}>
-                  <button className="btn">Explore</button>
-                </Link>
-              </div>
-            </li>
-          );
-        })}
-      </ul>
-    </div>
+    </section>
   );
 };

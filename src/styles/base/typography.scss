@@ -1,18 +1,28 @@
 @import url(//fonts.googleapis.com/css?family=Montserrat);
+@import url("https://fonts.googleapis.com/css2?family=Source+Code+Pro&display=swap");
 
 body {
-  font-family: "Montserrat";
+  // font-family: "Montserrat";
+  font-family: "Source Code Pro", monospace;
 }
 
-// h1,
-// h2,
-// h3,
-// h4,
-// h5,
-// h6,
-// p,
-// span,
-// a,
-// button {
-//   font-family: "Montserrat";
-// }
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+p,
+span,
+a,
+button {
+  color: #fff;
+}
+
+a {
+  text-decoration: none;
+}
+
+button {
+  font-family: "Source Code Pro", monospace;
+}

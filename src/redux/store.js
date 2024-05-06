@@ -5,8 +5,13 @@ import currencyReducer from "./currencySlice.js";
 
 export const store = configureStore({
   reducer: {
+    // from slice.js
     items: itemsReducer,
+
+    // from currencySlice.js
     currency: currencyReducer,
+
+    // from api.js
     [api.reducerPath]: api.reducer,
   },
   middleware: (getDefaultMiddleware) =>

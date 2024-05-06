@@ -1,0 +1,41 @@
+.list-items__wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+
+  .list-item {
+    width: 100%;
+    border-bottom: 1px solid #fff;
+    padding-bottom: 12px;
+
+    &__info {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+
+      &-price {
+        display: flex;
+        align-items: center;
+        gap: 4px;
+      }
+    }
+
+    &__img {
+      width: 24px;
+      height: 24px;
+    }
+  }
+
+  .btn__wrapper {
+    align-self: flex-end;
+    margin-left: auto;
+  }
+
+  .price-change__lower {
+    color: rgb(214, 51, 51);
+  }
+
+  .price-change__higher {
+    color: rgb(69, 219, 69);
+  }
+}

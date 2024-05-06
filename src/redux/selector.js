@@ -1,9 +1,9 @@
 import { createSelector } from "@reduxjs/toolkit";
 
-// Selekce všech položek z Redux store
+// Select "items" fromm Redux store
 const selectItems = (state) => state.items;
 
-// Selektor pro sečtení číselných hodnot
+// Sum up items prices in calculator
 export const selectTotal = createSelector(selectItems, (items) =>
   items.reduce((total, item) => total + item.amountValue, 0)
 );
