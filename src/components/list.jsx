@@ -1,7 +1,6 @@
-import React, { useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { useFetchDataQuery } from "../redux/api";
 import { addItem, updateItem, updateTotalCalcValue } from "../redux/slice";
-import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Popup } from "./popup";
 import { CurrencySwitcher } from "./currencySwitcher";
@@ -15,10 +14,15 @@ export const List = () => {
 
   const dispatch = useDispatch();
   const items = useSelector((store) => store.items);
-  console.log(data);
 
   const totalCalcValue = useSelector(selectTotal);
   const [totalCalc, setTotalCount] = useState(0);
+
+  // Filters states
+  const [search, setSearch] = useState("");
+  const [filtredData, setFilteredData] = useState([]);
+  const [amountSearchResult, setAmountSearchResult] = useState(0);
+  const [sortedItems, setSortedItems] = useState([]);
 
   const handleAdd = (id, name, price) => {
     const existingID = items.find((items) => items.id === id);
@@ -40,6 +44,13 @@ export const List = () => {
     }
   };
 
+  useEffect(() => {
+    if (data) {
+      console.log(data);
+      setFilteredData(data);
+    }
+  }, [data]);
+
   if (error) {
     return <div>Error. Something went wrong...</div>;
   }
@@ -48,17 +59,55 @@ export const List = () => {
     return <div>Data loading...</div>;
   }
 
+  /// Filter
+
+  const handleSearch = (event) => {
+    const searchTerm = event.target.value.toLowerCase();
+    const filtered = data.filter((item) =>
+      item.name.toLowerCase().includes(searchTerm)
+    );
+    setFilteredData(filtered);
+    setSearch(searchTerm);
+  };
+
+  const handleSortAsc = () => {
+    //sortedItems
+    console.log(sortedItems);
+    const sortedData = [...filtredData].sort(
+      (a, b) => a.current_price - b.current_price
+    );
+    setFilteredData(sortedData);
+  };
+
+  const handleSortDesc = () => {
+    const sortedData = [...filtredData].sort(
+      (a, b) => b.current_price - a.current_price
+    );
+    setFilteredData(sortedData);
+  };
+
+  const nextPagination = () => {
+    const dataLength = data.length / 10;
+    console.log(dataLength);
+  };
+
   return (
     <section className="section-container">
       <div>
-        {/* <div className="popup__wrapper"><Popup /></div> */}
+        <div className="filter-items__wrapper">
+          <input type="text" onChange={handleSearch} />
+          <span>Počet výsledků: {amountSearchResult}</span>
+          <button className="btn btn-primary" onClick={handleSortAsc}>
+            Seřadit od nejlevnějšího
+          </button>
 
-        {/* <div className="currency-switcher__wrapper">
-          <CurrencySwitcher />
-        </div> */}
+          <button className="btn btn-primary" onClick={handleSortDesc}>
+            Seřadit od nejdražšího
+          </button>
+        </div>
 
         <ul className="list-items__wrapper">
-          {data.map((coin) => {
+          {filtredData.map((coin) => {
             let priceChange =
               coin.price_change_24h < 0
                 ? "price-change__lower"
