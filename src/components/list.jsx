@@ -6,6 +6,7 @@ import { Popup } from "./popup";
 import { CurrencySwitcher } from "./currencySwitcher";
 import { Link, useParams } from "react-router-dom";
 import { selectTotal } from "../redux/selector";
+import { Pagination } from "./pagination";
 
 import { IoAddCircleOutline } from "react-icons/io5";
 
@@ -23,6 +24,11 @@ export const List = () => {
   const [filtredData, setFilteredData] = useState([]);
   const [amountSearchResult, setAmountSearchResult] = useState(0);
   const [sortedItems, setSortedItems] = useState([]);
+
+  // Pagination states
+  const [currentPage, setCurrentPage] = useState(0);
+  const [totalPages, setTotalPages] = useState(0);
+  const [totalDataItems, setTotalDataItems] = useState(0);
 
   const handleAdd = (id, name, price) => {
     const existingID = items.find((items) => items.id === id);
@@ -46,8 +52,13 @@ export const List = () => {
 
   useEffect(() => {
     if (data) {
-      console.log(data);
       setFilteredData(data);
+      let itemsAmount = data.length / 5;
+      setTotalDataItems(data.length);
+
+      if (data.length > itemsAmount) {
+        setTotalPages(data.length / 10);
+      }
     }
   }, [data]);
 
@@ -60,7 +71,6 @@ export const List = () => {
   }
 
   /// Filter
-
   const handleSearch = (event) => {
     const searchTerm = event.target.value.toLowerCase();
     const filtered = data.filter((item) =>
@@ -70,9 +80,8 @@ export const List = () => {
     setSearch(searchTerm);
   };
 
+  // Sorting items based on price
   const handleSortAsc = () => {
-    //sortedItems
-    console.log(sortedItems);
     const sortedData = [...filtredData].sort(
       (a, b) => a.current_price - b.current_price
     );
@@ -86,10 +95,7 @@ export const List = () => {
     setFilteredData(sortedData);
   };
 
-  const nextPagination = () => {
-    const dataLength = data.length / 10;
-    console.log(dataLength);
-  };
+  console.log(data)
 
   return (
     <section className="section-container">
@@ -107,14 +113,13 @@ export const List = () => {
         </div>
 
         <ul className="list-items__wrapper">
-          {filtredData.map((coin) => {
-            let priceChange =
-              coin.price_change_24h < 0
-                ? "price-change__lower"
-                : "price-change__higher";
-
+          {/* {filtredData.slice(0, 100).map((coin) => { */}
+          {filtredData.slice(currentPage, totalPages).map((coin, index) => {
+            let priceChange = coin.price_change_24h < 0 ? "price-change__lower" : "price-change__higher";
             return (
               <li key={coin.id} className="flex list-item">
+                <span>{coin.market_cap_rank}</span>
+                {/* <span>{index + 1}</span> */}
                 <div className="list-item__info">
                   <img
                     className="list-item__img"
@@ -150,6 +155,16 @@ export const List = () => {
             );
           })}
         </ul>
+
+        <div className="pagination__wrapper">
+          <Pagination
+            currentPage={currentPage}
+            setCurrentPage={setCurrentPage}
+            totalPages={totalPages}
+            setTotalPages={setTotalPages}
+            setTotalDataItems={setTotalDataItems}
+          />
+        </div>
       </div>
     </section>
   );
