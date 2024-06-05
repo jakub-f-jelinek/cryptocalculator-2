@@ -3,3 +3,14 @@
   width: 18px;
   height: auto;
 }
+
+.icon__wrapper {
+  &.icon-default {
+    color: #000;
+  }
+
+  *.icon-inverse {
+    color: #fff;
+  }
+}
+

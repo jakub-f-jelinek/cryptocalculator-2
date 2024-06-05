@@ -1,0 +1,11 @@
+.filter-items__wrapper {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  justify-content: space-between;
+
+  .filter-items__buttons {
+    display: flex;
+    gap: 12px;
+  }
+}
