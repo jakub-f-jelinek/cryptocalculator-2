@@ -1,14 +1,24 @@
+// General
 import React, { useState, useEffect } from "react";
-import { useFetchDataQuery } from "../redux/api";
-import { addItem, updateItem, updateTotalCalcValue } from "../redux/slice";
-import { useDispatch, useSelector } from "react-redux";
+import { Link } from "react-router-dom";
+
+// Components
 import { Popup } from "./popup";
-import { CurrencySwitcher } from "./currencySwitcher";
-import { Link, useParams } from "react-router-dom";
-import { selectTotal } from "../redux/selector";
 import { Pagination } from "./pagination";
 
+// Redux Toolkit
+import { useFetchDataQuery } from "../redux/api";
+import { addItem, deleteItem, updateTotalCalcValue } from "../redux/slice";
+import { useDispatch, useSelector } from "react-redux";
+import { CurrencySwitcher } from "./currencySwitcher";
+import { selectTotal } from "../redux/selector";
+
+// Icons
 import { IoAddCircleOutline } from "react-icons/io5";
+import { FaArrowDownWideShort } from "react-icons/fa6";
+import { FaArrowUpWideShort } from "react-icons/fa6";
+import { RxCross1 } from "react-icons/rx";
+import { FaSearch } from "react-icons/fa";
 
 export const List = () => {
   const { data, error, isLoading } = useFetchDataQuery();
@@ -20,10 +30,9 @@ export const List = () => {
   const [totalCalc, setTotalCount] = useState(0);
 
   // Filters states
+  const [originData, setOriginData] = useState([]);
   const [search, setSearch] = useState("");
   const [filtredData, setFilteredData] = useState([]);
-  const [amountSearchResult, setAmountSearchResult] = useState(0);
-  const [sortedItems, setSortedItems] = useState([]);
 
   // Pagination states
   const [currentPage, setCurrentPage] = useState(0);
@@ -31,7 +40,7 @@ export const List = () => {
   const [totalDataItems, setTotalDataItems] = useState(0);
 
   const handleAdd = (id, name, price) => {
-    const existingID = items.find((items) => items.id === id);
+    const existingID = items.find((item) => item.id === id);
 
     if (!existingID) {
       dispatch(
@@ -53,6 +62,8 @@ export const List = () => {
   useEffect(() => {
     if (data) {
       setFilteredData(data);
+      setOriginData(data);
+
       let itemsAmount = data.length / 5;
       setTotalDataItems(data.length);
 
@@ -60,7 +71,7 @@ export const List = () => {
         setTotalPages(data.length / 10);
       }
     }
-  }, [data]);
+  }, [data, items]);
 
   if (error) {
     return <div>Error. Something went wrong...</div>;
@@ -70,7 +81,7 @@ export const List = () => {
     return <div>Data loading...</div>;
   }
 
-  /// Filter
+  // Fulltext search
   const handleSearch = (event) => {
     const searchTerm = event.target.value.toLowerCase();
     const filtered = data.filter((item) =>
@@ -80,7 +91,7 @@ export const List = () => {
     setSearch(searchTerm);
   };
 
-  // Sorting items based on price
+  // Filters Sorting items based on price
   const handleSortAsc = () => {
     const sortedData = [...filtredData].sort(
       (a, b) => a.current_price - b.current_price
@@ -95,31 +106,74 @@ export const List = () => {
     setFilteredData(sortedData);
   };
 
-  console.log(data)
+  // Reset all filter results
+  const resetFilter = () => {
+    setFilteredData(originData);
+  };
+
+  // Actions
+  const handleDelete = (id) => {
+    dispatch(
+      deleteItem({
+        id: id,
+      })
+    );
+  };
+
+  const itemsSet = new Set(items.map((item) => item.id));
 
   return (
     <section className="section-container">
       <div>
         <div className="filter-items__wrapper">
-          <input type="text" onChange={handleSearch} />
-          <span>Počet výsledků: {amountSearchResult}</span>
-          <button className="btn btn-primary" onClick={handleSortAsc}>
-            Seřadit od nejlevnějšího
-          </button>
+          <div className="block__input-wrapper">
+            <input
+              className="block__input block__input-text"
+              type="text"
+              placeholder="Název..."
+              onChange={handleSearch}
+            />
+            <span className="icon__wrapper icon-inverse">
+              <FaSearch />
+            </span>
+          </div>
+          <div className="filter-items__buttons">
+            <button className="btn btn-tertiary" onClick={handleSortAsc}>
+              <span className="icon__wrapper icon-default">
+                <FaArrowUpWideShort />
+              </span>
+              Seřadit od nejlevnějšího
+            </button>
 
-          <button className="btn btn-primary" onClick={handleSortDesc}>
-            Seřadit od nejdražšího
-          </button>
+            <button className="btn btn-tertiary" onClick={handleSortDesc}>
+              <span className="icon__wrapper icon-default">
+                <FaArrowDownWideShort />
+              </span>
+              Seřadit od nejdražšího
+            </button>
+
+            <button className="btn btn-tertiary" onClick={resetFilter}>
+              <span className="icon__wrapper icon-default">
+                <RxCross1 />
+              </span>
+              Zrušit filtry
+            </button>
+          </div>
         </div>
 
         <ul className="list-items__wrapper">
-          {/* {filtredData.slice(0, 100).map((coin) => { */}
           {filtredData.slice(currentPage, totalPages).map((coin, index) => {
-            let priceChange = coin.price_change_24h < 0 ? "price-change__lower" : "price-change__higher";
+            // System variables
+            let priceChange =
+              coin.price_change_24h < 0
+                ? "price-change__lower"
+                : "price-change__higher";
+            let isInCalc = itemsSet.has(coin.id);
+            let className = `flex list-item ${isInCalc ? "in-calc" : ""}`;
+
             return (
-              <li key={coin.id} className="flex list-item">
+              <li key={index} className={className}>
                 <span>{coin.market_cap_rank}</span>
-                {/* <span>{index + 1}</span> */}
                 <div className="list-item__info">
                   <img
                     className="list-item__img"
@@ -134,6 +188,9 @@ export const List = () => {
                   <span className={priceChange}>{coin.price_change_24h}</span>
                 </div>
 
+                <div>In</div>
+                <div>Out</div>
+
                 <div className="btn__wrapper">
                   <button
                     className="btn btn-primary"
@@ -142,10 +199,19 @@ export const List = () => {
                     }
                   >
                     Přidat do kalkulačky
-                    <div className="icon-wrapper">
+                    <div className="icon-default">
                       <IoAddCircleOutline />
                     </div>
                   </button>
+
+                  <div>
+                    <button
+                      onClick={() => handleDelete(coin.id)}
+                      className="btn btn-tertiary"
+                    >
+                      X
+                    </button>
+                  </div>
 
                   <Link to={`/${coin.id}`}>
                     <button className="btn btn-secondary">Detail</button>
