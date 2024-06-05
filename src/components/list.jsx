@@ -120,8 +120,6 @@ export const List = () => {
     );
   };
 
-  const itemsSet = new Set(items.map((item) => item.id));
-
   return (
     <section className="section-container">
       <div>
@@ -168,7 +166,7 @@ export const List = () => {
               coin.price_change_24h < 0
                 ? "price-change__lower"
                 : "price-change__higher";
-            let isInCalc = itemsSet.has(coin.id);
+            let isInCalc = items.find((item) => item.id === coin.id);
             let className = `flex list-item ${isInCalc ? "in-calc" : ""}`;
 
             return (
