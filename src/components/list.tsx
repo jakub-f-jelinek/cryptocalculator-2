@@ -1,16 +1,14 @@
 // General
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, ChangeEvent } from "react";
 import { Link } from "react-router-dom";
 
 // Components
-import { Popup } from "./popup";
 import { Pagination } from "./pagination";
 
 // Redux Toolkit
 import { useFetchDataQuery } from "../redux/api";
 import { addItem, deleteItem, updateTotalCalcValue } from "../redux/slice";
 import { useDispatch, useSelector } from "react-redux";
-import { CurrencySwitcher } from "./currencySwitcher";
 import { selectTotal } from "../redux/selector";
 
 // Icons
@@ -20,26 +18,48 @@ import { FaArrowUpWideShort } from "react-icons/fa6";
 import { RxCross1 } from "react-icons/rx";
 import { FaSearch } from "react-icons/fa";
 
-export const List = () => {
-  const { data, error, isLoading } = useFetchDataQuery();
+interface Item {
+  id: number;
+  name: string;
+  price: number;
+  price_change_24h: number;
+  current_price: number;
+  market_cap_rank: number;
+  image: string;
+}
+
+interface RootState {
+  items: ItemType[];
+}
+
+interface ItemType {
+  id: number;
+  name: string;
+  price: number;
+  unitsTotal: number;
+  amountValue: number;
+  inCalculator: boolean;
+}
+
+export const List: React.FC = () => {
+  const { data, error, isLoading } = useFetchDataQuery(undefined);
 
   const dispatch = useDispatch();
-  const items = useSelector((store) => store.items);
+  const items = useSelector((store: RootState) => store.items);
 
   const totalCalcValue = useSelector(selectTotal);
-  const [totalCalc, setTotalCount] = useState(0);
 
   // Filters states
-  const [originData, setOriginData] = useState([]);
-  const [search, setSearch] = useState("");
-  const [filtredData, setFilteredData] = useState([]);
+  const [originData, setOriginData] = useState<Item[]>([]);
+  const [search, setSearch] = useState<string>("");
+  const [filtredData, setFilteredData] = useState<Item[]>([]);
 
   // Pagination states
-  const [currentPage, setCurrentPage] = useState(0);
-  const [totalPages, setTotalPages] = useState(0);
-  const [totalDataItems, setTotalDataItems] = useState(0);
+  const [currentPage, setCurrentPage] = useState<number>(0);
+  const [totalPages, setTotalPages] = useState<number>(0);
+  const [totalDataItems, setTotalDataItems] = useState<number>(0);
 
-  const handleAdd = (id, name, price) => {
+  const handleAdd = (id: number, name: string, price: number) => {
     const existingID = items.find((item) => item.id === id);
 
     if (!existingID) {
@@ -65,7 +85,10 @@ export const List = () => {
       setOriginData(data);
 
       let itemsAmount = data.length / 5;
-      setTotalDataItems(data.length);
+
+      let totalItems = data.length;
+      console.log(totalItems);
+      setTotalDataItems(totalItems);
 
       if (data.length > itemsAmount) {
         setTotalPages(data.length / 10);
@@ -82,13 +105,16 @@ export const List = () => {
   }
 
   // Fulltext search
-  const handleSearch = (event) => {
-    const searchTerm = event.target.value.toLowerCase();
-    const filtered = data.filter((item) =>
+  const handleSearch = (e: ChangeEvent<HTMLInputElement>) => {
+    const searchTerm = e.target.value.toLowerCase();
+    const filtered = data.filter((item: any) =>
       item.name.toLowerCase().includes(searchTerm)
     );
+
     setFilteredData(filtered);
     setSearch(searchTerm);
+    let lengthItems = filtered.length;
+    setTotalDataItems(lengthItems);
   };
 
   // Filters Sorting items based on price
@@ -112,7 +138,7 @@ export const List = () => {
   };
 
   // Actions
-  const handleDelete = (id) => {
+  const handleDelete = (id: number) => {
     dispatch(
       deleteItem({
         id: id,
@@ -157,6 +183,7 @@ export const List = () => {
               Zrušit filtry
             </button>
           </div>
+          <div>Počet výsledků: {totalDataItems}</div>
         </div>
 
         <ul className="list-items__wrapper">
@@ -185,9 +212,6 @@ export const List = () => {
                   </span>
                   <span className={priceChange}>{coin.price_change_24h}</span>
                 </div>
-
-                <div>In</div>
-                <div>Out</div>
 
                 <div className="btn__wrapper">
                   <button
@@ -226,6 +250,7 @@ export const List = () => {
             setCurrentPage={setCurrentPage}
             totalPages={totalPages}
             setTotalPages={setTotalPages}
+            totalDataItems={totalDataItems}
             setTotalDataItems={setTotalDataItems}
           />
         </div>
