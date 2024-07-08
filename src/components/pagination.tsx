@@ -9,23 +9,22 @@ interface PaginationProps {
   setTotalDataItems: Dispatch<SetStateAction<number>>;
 }
 
-export const Pagination: React.FC<PaginationProps> = ({
-  currentPage,
-  setCurrentPage,
-  totalPages,
-  setTotalPages,
-  totalDataItems,
-  setTotalDataItems,
-}) => {
+export const Pagination: React.FC<PaginationProps> = ({ currentPage, setCurrentPage, totalPages, setTotalPages, totalDataItems }) => {
+
   const handlePagination = (i: number) => {
+    console.log(i);
+
     if (i === 0) {
       setCurrentPage(i);
-      setTotalPages(9);
+      setTotalPages(10);
     } else {
-      let countPage = (i + 1) * 10;
+      let countPage = i * 10;
       console.log(countPage);
       setCurrentPage(countPage);
       setTotalPages(countPage + 10);
+
+      console.log("Pagination (currentPage): " + currentPage)
+      console.log("Pagination (totalPages): " + totalPages)
     }
   };
 
@@ -37,7 +36,8 @@ export const Pagination: React.FC<PaginationProps> = ({
   };
 
   const handleNext = () => {
-    if (currentPage < 90) {
+    let paginationNumbers = Math.ceil(totalDataItems);
+    if (currentPage < paginationNumbers - 10) {
       setCurrentPage(currentPage + 10);
       setTotalPages(totalPages + 10);
     }
@@ -45,7 +45,9 @@ export const Pagination: React.FC<PaginationProps> = ({
 
   const buttons = () => {
     const buttonsArry = [];
-    for (let i = 0; i < 9; i++) {
+    let paginationNumbers = Math.ceil(totalDataItems / 10);
+
+    for (let i = 0; i < paginationNumbers; i++) {
       buttonsArry.push(
         <button
           className="btn btn-secondary"

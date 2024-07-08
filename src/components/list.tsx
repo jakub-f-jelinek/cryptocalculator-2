@@ -84,10 +84,9 @@ export const List: React.FC = () => {
       setFilteredData(data);
       setOriginData(data);
 
-      let itemsAmount = data.length / 5;
+      let itemsAmount = 10
 
       let totalItems = data.length;
-      console.log(totalItems);
       setTotalDataItems(totalItems);
 
       if (data.length > itemsAmount) {
@@ -95,6 +94,14 @@ export const List: React.FC = () => {
       }
     }
   }, [data, items]);
+
+  useEffect(() => {
+    console.log(search);
+    if (search === "") {
+      setCurrentPage(0);
+      setTotalPages(10);
+    }
+  }, [search])
 
   if (error) {
     return <div>Error. Something went wrong...</div>;
@@ -109,12 +116,14 @@ export const List: React.FC = () => {
     const searchTerm = e.target.value.toLowerCase();
     const filtered = data.filter((item: any) =>
       item.name.toLowerCase().includes(searchTerm)
-    );
-
-    setFilteredData(filtered);
+  );
+  
     setSearch(searchTerm);
+    setFilteredData(filtered);
     let lengthItems = filtered.length;
     setTotalDataItems(lengthItems);
+
+    
   };
 
   // Filters Sorting items based on price
@@ -135,6 +144,11 @@ export const List: React.FC = () => {
   // Reset all filter results
   const resetFilter = () => {
     setFilteredData(originData);
+    setCurrentPage(0);
+    setTotalPages(10);
+    
+    setSearch("");
+    setTotalDataItems(100);
   };
 
   // Actions
@@ -155,6 +169,7 @@ export const List: React.FC = () => {
               className="block__input block__input-text"
               type="text"
               placeholder="Název..."
+              value={search}
               onChange={handleSearch}
             />
             <span className="icon__wrapper icon-inverse">
@@ -188,13 +203,12 @@ export const List: React.FC = () => {
 
         <ul className="list-items__wrapper">
           {filtredData.slice(currentPage, totalPages).map((coin, index) => {
+
             // System variables
-            let priceChange =
-              coin.price_change_24h < 0
-                ? "price-change__lower"
-                : "price-change__higher";
+            let priceChange = coin.price_change_24h < 0 ? "price-change__lower" : "price-change__higher";
             let isInCalc = items.find((item) => item.id === coin.id);
             let className = `flex list-item ${isInCalc ? "in-calc" : ""}`;
+            //
 
             return (
               <li key={index} className={className}>
