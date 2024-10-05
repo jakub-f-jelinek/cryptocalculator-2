@@ -4,11 +4,11 @@
 }
 
 .btn {
-  padding: 6px 12px;
+  padding: 8px 22px;
   text-transform: uppercase;
   color: $template-color;
   font-size: 12px;
-  border-radius: 0;
+  border-radius: 12px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -39,6 +39,25 @@
   &.btn-tertiary {
     background-color: #fff;
     border: 1px solid #fff;
-    color: #000;
+
+    .btn-label,
+    .btn-icon {
+      color: #000;
+    }
+  }
+
+  .btn-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  &.btn-circle {
+    border: 1px solid #fff;
+    color: #fff;
+    border-radius: 50%;
+    min-width: 32px;
+    padding: 8px;
+    background-color: transparent;
   }
 }

@@ -1,9 +1,12 @@
 // General
 import React, { useState, useEffect, ChangeEvent } from "react";
 import { Link } from "react-router-dom";
+import classNames from "classNames";
 
 // Components
 import { Pagination } from "./pagination";
+import { Button } from "../partials/button";
+import { Calculator } from "./calculator";
 
 // Redux Toolkit
 import { useFetchDataQuery } from "../redux/api";
@@ -17,6 +20,8 @@ import { FaArrowDownWideShort } from "react-icons/fa6";
 import { FaArrowUpWideShort } from "react-icons/fa6";
 import { RxCross1 } from "react-icons/rx";
 import { FaSearch } from "react-icons/fa";
+import { FaRegArrowAltCircleRight } from "react-icons/fa";
+import { MdDeleteForever } from "react-icons/md";
 
 interface Item {
   id: number;
@@ -59,6 +64,7 @@ export const List: React.FC = () => {
   const [totalPages, setTotalPages] = useState<number>(0);
   const [totalDataItems, setTotalDataItems] = useState<number>(0);
 
+  // Actions
   const handleAdd = (id: number, name: string, price: number) => {
     const existingID = items.find((item) => item.id === id);
 
@@ -84,7 +90,7 @@ export const List: React.FC = () => {
       setFilteredData(data);
       setOriginData(data);
 
-      let itemsAmount = 10
+      let itemsAmount = 10;
 
       let totalItems = data.length;
       setTotalDataItems(totalItems);
@@ -92,6 +98,8 @@ export const List: React.FC = () => {
       if (data.length > itemsAmount) {
         setTotalPages(data.length / 10);
       }
+
+      console.log(items);
     }
   }, [data, items]);
 
@@ -101,29 +109,27 @@ export const List: React.FC = () => {
       setCurrentPage(0);
       setTotalPages(10);
     }
-  }, [search])
+  }, [search]);
 
-  if (error) {
-    return <div>Error. Something went wrong...</div>;
-  }
-
-  if (isLoading) {
-    return <div>Data loading...</div>;
-  }
+  const handleDelete = (id: number) => {
+    dispatch(
+      deleteItem({
+        id: id,
+      })
+    );
+  };
 
   // Fulltext search
   const handleSearch = (e: ChangeEvent<HTMLInputElement>) => {
     const searchTerm = e.target.value.toLowerCase();
     const filtered = data.filter((item: any) =>
       item.name.toLowerCase().includes(searchTerm)
-  );
-  
+    );
+
     setSearch(searchTerm);
     setFilteredData(filtered);
     let lengthItems = filtered.length;
     setTotalDataItems(lengthItems);
-
-    
   };
 
   // Filters Sorting items based on price
@@ -146,27 +152,38 @@ export const List: React.FC = () => {
     setFilteredData(originData);
     setCurrentPage(0);
     setTotalPages(10);
-    
+
     setSearch("");
     setTotalDataItems(100);
   };
 
-  // Actions
-  const handleDelete = (id: number) => {
-    dispatch(
-      deleteItem({
-        id: id,
-      })
-    );
+  // Classnames function
+  const getItemClassList = (isInCalc: boolean) => {
+    return classNames("flex list-item", {
+      "in-calc": isInCalc,
+    });
   };
 
+  const getPriceChangeClass = (priceChange24h: number) => {
+    return priceChange24h < 0 ? "price-change__lower" : "price-change__higher";
+  };
+
+  // RTK Query loading
+  if (error) {
+    return <div>Error. Something went wrong...</div>;
+  }
+
+  if (isLoading) {
+    return <div>Data loading...</div>;
+  }
+
   return (
-    <section className="section-container">
-      <div>
-        <div className="filter-items__wrapper">
-          <div className="block__input-wrapper">
+    <section className="section-container flex">
+      <div className="w-60 block">
+        <div className="filter-items__wrapper flex column w-100">
+          <div className="block__input-wrapper flex w-100">
             <input
-              className="block__input block__input-text"
+              className="block__input block__input-text w-100"
               type="text"
               placeholder="Název..."
               value={search}
@@ -176,42 +193,42 @@ export const List: React.FC = () => {
               <FaSearch />
             </span>
           </div>
-          <div className="filter-items__buttons">
-            <button className="btn btn-tertiary" onClick={handleSortAsc}>
-              <span className="icon__wrapper icon-default">
-                <FaArrowUpWideShort />
-              </span>
-              Seřadit od nejlevnějšího
-            </button>
 
-            <button className="btn btn-tertiary" onClick={handleSortDesc}>
-              <span className="icon__wrapper icon-default">
-                <FaArrowDownWideShort />
-              </span>
-              Seřadit od nejdražšího
-            </button>
+          <div className="filter-items__buttons flex w-100">
+            <Button
+              className="btn-secondary"
+              text="Od nejlevnějšího"
+              icon={<FaArrowUpWideShort />}
+              onClick={handleSortAsc}
+            />
+            <Button
+              className="btn-tertiary"
+              text="Od nejdražšího"
+              icon={<FaArrowDownWideShort />}
+              onClick={handleSortDesc}
+            />
+            <Button
+              className="btn-tertiary"
+              text="Zrušit filtry"
+              icon={<RxCross1 />}
+              onClick={resetFilter}
+            />
 
-            <button className="btn btn-tertiary" onClick={resetFilter}>
-              <span className="icon__wrapper icon-default">
-                <RxCross1 />
-              </span>
-              Zrušit filtry
-            </button>
+            <div>Počet výsledků: {totalDataItems}</div>
           </div>
-          <div>Počet výsledků: {totalDataItems}</div>
         </div>
 
         <ul className="list-items__wrapper">
           {filtredData.slice(currentPage, totalPages).map((coin, index) => {
-
-            // System variables
-            let priceChange = coin.price_change_24h < 0 ? "price-change__lower" : "price-change__higher";
-            let isInCalc = items.find((item) => item.id === coin.id);
-            let className = `flex list-item ${isInCalc ? "in-calc" : ""}`;
-            //
+            // Variables
+            const isInCalc = items.some((item) => item.id === coin.id);
+            const listItemClassName = getItemClassList(isInCalc);
+            const priceChangeClassName = getPriceChangeClass(
+              coin.price_change_24h
+            );
 
             return (
-              <li key={index} className={className}>
+              <li key={index} id={coin.name} className={listItemClassName}>
                 <span>{coin.market_cap_rank}</span>
                 <div className="list-item__info">
                   <img
@@ -224,33 +241,31 @@ export const List: React.FC = () => {
                     {coin.current_price}
                     <span>CZK</span>
                   </span>
-                  <span className={priceChange}>{coin.price_change_24h}</span>
+                  <span className={priceChangeClassName}>
+                    {coin.price_change_24h.toFixed(4)}
+                  </span>
                 </div>
 
                 <div className="btn__wrapper">
-                  <button
-                    className="btn btn-primary"
+                  <Button
+                    className="btn btn-secondary"
+                    icon={<IoAddCircleOutline />}
                     onClick={() =>
                       handleAdd(coin.id, coin.name, coin.current_price)
                     }
-                  >
-                    Přidat do kalkulačky
-                    <div className="icon-default">
-                      <IoAddCircleOutline />
-                    </div>
-                  </button>
+                  />
 
-                  <div>
-                    <button
-                      onClick={() => handleDelete(coin.id)}
-                      className="btn btn-tertiary"
-                    >
-                      X
-                    </button>
-                  </div>
+                  <Button
+                    className="btn btn-secondary"
+                    icon={<MdDeleteForever />}
+                    onClick={() => handleDelete(coin.id)}
+                  />
 
                   <Link to={`/${coin.id}`}>
-                    <button className="btn btn-secondary">Detail</button>
+                    <Button
+                      className="btn btn-secondary"
+                      icon={<FaRegArrowAltCircleRight />}
+                    />
                   </Link>
                 </div>
               </li>
@@ -267,6 +282,13 @@ export const List: React.FC = () => {
             totalDataItems={totalDataItems}
             setTotalDataItems={setTotalDataItems}
           />
+        </div>
+      </div>
+      <div className="w-40 block">
+        <div className="card-wrapper"></div>
+
+        <div className="card-wrapper">
+          <Calculator />
         </div>
       </div>
     </section>

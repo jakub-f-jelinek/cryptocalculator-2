@@ -8,7 +8,16 @@
 }
 
 .section-container {
-  max-width: $content-width;
-  width: $content-width;
+  width: 100%;
   margin-top: 90px;
+  margin-bottom: 90px;
+}
+
+.pagination__wrapper {
+  display: flex;
+  justify-content: center;
+
+  .pagination__items {
+    gap: 12px;
+  }
 }

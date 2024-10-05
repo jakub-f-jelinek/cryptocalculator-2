@@ -1,4 +1,4 @@
-import React, { Dispatch, SetStateAction, useEffect } from "react";
+import React, { Dispatch, SetStateAction } from "react";
 
 interface PaginationProps {
   currentPage: number;
@@ -9,22 +9,21 @@ interface PaginationProps {
   setTotalDataItems: Dispatch<SetStateAction<number>>;
 }
 
-export const Pagination: React.FC<PaginationProps> = ({ currentPage, setCurrentPage, totalPages, setTotalPages, totalDataItems }) => {
-
+export const Pagination: React.FC<PaginationProps> = ({
+  currentPage,
+  setCurrentPage,
+  totalPages,
+  setTotalPages,
+  totalDataItems,
+}) => {
   const handlePagination = (i: number) => {
-    console.log(i);
-
     if (i === 0) {
       setCurrentPage(i);
       setTotalPages(10);
     } else {
       let countPage = i * 10;
-      console.log(countPage);
       setCurrentPage(countPage);
       setTotalPages(countPage + 10);
-
-      console.log("Pagination (currentPage): " + currentPage)
-      console.log("Pagination (totalPages): " + totalPages)
     }
   };
 
@@ -50,7 +49,7 @@ export const Pagination: React.FC<PaginationProps> = ({ currentPage, setCurrentP
     for (let i = 0; i < paginationNumbers; i++) {
       buttonsArry.push(
         <button
-          className="btn btn-secondary"
+          className="btn btn-circle"
           key={i}
           onClick={() => handlePagination(i)}
         >
@@ -62,7 +61,7 @@ export const Pagination: React.FC<PaginationProps> = ({ currentPage, setCurrentP
   };
 
   return (
-    <div className="pagination__wrapper flex">
+    <div className="pagination__items flex">
       <button className="btn btn-primary" onClick={handlePrev}>
         Prev
       </button>
