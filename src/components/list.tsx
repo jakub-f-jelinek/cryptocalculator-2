@@ -7,6 +7,7 @@ import classNames from "classNames";
 import { Pagination } from "./pagination";
 import { Button } from "../partials/button";
 import { Calculator } from "./calculator";
+import { ChartCalc } from "./chart";
 
 // Redux Toolkit
 import { useFetchDataQuery } from "../redux/api";
@@ -65,7 +66,12 @@ export const List: React.FC = () => {
   const [totalDataItems, setTotalDataItems] = useState<number>(0);
 
   // Actions
-  const handleAdd = (id: number, name: string, price: number) => {
+  const handleAdd = (
+    id: number,
+    name: string,
+    price: number,
+    image: string
+  ) => {
     const existingID = items.find((item) => item.id === id);
 
     if (!existingID) {
@@ -77,6 +83,7 @@ export const List: React.FC = () => {
           unitsTotal: 1,
           amountValue: price,
           inCalculator: true,
+          image: image,
         })
       );
 
@@ -98,13 +105,10 @@ export const List: React.FC = () => {
       if (data.length > itemsAmount) {
         setTotalPages(data.length / 10);
       }
-
-      console.log(items);
     }
-  }, [data, items]);
+  }, [data]);
 
   useEffect(() => {
-    console.log(search);
     if (search === "") {
       setCurrentPage(0);
       setTotalPages(10);
@@ -179,7 +183,7 @@ export const List: React.FC = () => {
 
   return (
     <section className="section-container flex">
-      <div className="w-60 block">
+      <div className="w-60 block card-wrapper block--margin-l">
         <div className="filter-items__wrapper flex column w-100">
           <div className="block__input-wrapper flex w-100">
             <input
@@ -241,6 +245,7 @@ export const List: React.FC = () => {
                     {coin.current_price}
                     <span>CZK</span>
                   </span>
+
                   <span className={priceChangeClassName}>
                     {coin.price_change_24h.toFixed(4)}
                   </span>
@@ -248,22 +253,27 @@ export const List: React.FC = () => {
 
                 <div className="btn__wrapper">
                   <Button
-                    className="btn btn-secondary"
+                    className="btn btn-circle btn-secondary"
                     icon={<IoAddCircleOutline />}
                     onClick={() =>
-                      handleAdd(coin.id, coin.name, coin.current_price)
+                      handleAdd(
+                        coin.id,
+                        coin.name,
+                        coin.current_price,
+                        coin.image
+                      )
                     }
                   />
 
                   <Button
-                    className="btn btn-secondary"
+                    className="btn btn-circle btn-secondary"
                     icon={<MdDeleteForever />}
                     onClick={() => handleDelete(coin.id)}
                   />
 
                   <Link to={`/${coin.id}`}>
                     <Button
-                      className="btn btn-secondary"
+                      className="btn btn-circle btn-secondary"
                       icon={<FaRegArrowAltCircleRight />}
                     />
                   </Link>
@@ -285,7 +295,9 @@ export const List: React.FC = () => {
         </div>
       </div>
       <div className="w-40 block">
-        <div className="card-wrapper"></div>
+        <div className="card-wrapper block--margin-b">
+          <ChartCalc />
+        </div>
 
         <div className="card-wrapper">
           <Calculator />
