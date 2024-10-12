@@ -1,21 +1,25 @@
 .header {
   position: fixed;
-  top: 0;
-  right: 0;
+  top: 12px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: calc(100% - 64px);
+  border-radius: 22px;
+  border: 1px solid #fff;
 
-  width: 100%;
   height: auto;
   display: flex;
   justify-content: center;
 
-  background-color: black;
+  background-color: $template-color;
 }
 
 .menu__container {
   display: flex;
-  max-width: $content-width;
-  width: $content-width;
+  width: 100%;
   gap: 24px;
+  padding-left: 44px;
+  padding-right: 44px;
 
   .menu__nav,
   .menu__extras {
