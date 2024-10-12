@@ -33,7 +33,7 @@ export const Navigation = () => {
           <ul className="menu__extras-list">
             <li className="menu__item">
               <Link to="/calculator">
-                <span>{totalCalcValue} CZK</span>
+                <span>{totalCalcValue.toFixed(2)} CZK</span>
               </Link>
             </li>
 
